@@ -1,7 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:footer/footer.dart';
-import 'package:footer/footer_view.dart';
-import 'package:quizzproject/widgets/createddrawer.dart';
+import 'package:http/http.dart' as http;
 
 class ResultScreen extends StatefulWidget {
   final String tittle;
@@ -13,54 +12,67 @@ class ResultScreen extends StatefulWidget {
 }
 
 class _ResultScreenState extends State<ResultScreen> {
+  Future<List<User>> usersFuture = getUsers();
+
+  static Future<List<User>> getUsers() async {
+    const url = 'http://tgryl.pl/quiz/results';
+    final response = await http.get(Uri.parse(url));
+    final body = json.decode(response.body);
+    return body.map<User>(User.fromJson).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.tittle),
+          title: const Text('Ranking'),
         ),
-        body: Column(children: [
-          (DataTable(
-            columns: const [
-              DataColumn(label: Text("Nick")),
-              DataColumn(label: Text("Points")),
-              DataColumn(label: Text("Type")),
-              DataColumn(label: Text("Data")),
-            ],
-            rows: const [
-              DataRow(cells: [
-                DataCell(Text("user1")),
-                DataCell(Text("10")),
-                DataCell(Text("normal")),
-                DataCell(Text("2022-12-09")),
-              ]),
-              DataRow(cells: [
-                DataCell(Text("user2")),
-                DataCell(Text("20")),
-                DataCell(Text("vip")),
-                DataCell(Text("2022-12-10")),
-              ]),
-              DataRow(cells: [
-                DataCell(Text("user3")),
-                DataCell(Text("15")),
-                DataCell(Text("normal")),
-                DataCell(Text("2022-12-11")),
-              ]),
-              DataRow(cells: [
-                DataCell(Text("user4")),
-                DataCell(Text("25")),
-                DataCell(Text("vip")),
-                DataCell(Text("2022-12-12")),
-              ]),
-              DataRow(cells: [
-                DataCell(Text("user5")),
-                DataCell(Text("5")),
-                DataCell(Text("normal")),
-                DataCell(Text("2022-12-13")),
-              ]),
-            ],
-          )),
-        ]),
-        drawer: CreatedDrawer());
+        body: Center(
+          child: FutureBuilder<List<User>>(
+            future: usersFuture,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final users = snapshot.data!;
+                return buildUsers(users);
+              } else {
+                return const Text('No user data.');
+              }
+            },
+          ),
+        ));
   }
+
+  Widget buildUsers(List<User> users) => ListView.builder(
+      itemCount: users.length,
+      itemBuilder: (context, index) {
+        final user = users[index];
+        return Card(
+          child: ListTile(
+            leading: Text(user.nick),
+            title: Text(user.type),
+            subtitle: Text("${user.score}     ${user.type}"),
+          ),
+        );
+      });
+}
+
+class User {
+  final String nick;
+  final int score;
+  final int total;
+  final String type;
+
+  const User(
+      {required this.nick,
+      required this.score,
+      required this.total,
+      required this.type});
+
+  static User fromJson(json) => User(
+        nick: json['nick'],
+        score: json['score'],
+        total: json['total'],
+        type: json['type'],
+      );
 }

@@ -39,6 +39,15 @@ class _TestScreenState extends State<TestScreen> {
                         onPressed: () { /* obsługa kliknięcia drugiego przycisku */ },
                         child: Text("Przycisk 2"),
                       ),
+                      ElevatedButton(
+                        onPressed: () { /* obsługa kliknięcia pierwszego przycisku */ },
+                        child: Text("Przycisk 1"),
+                      ),
+                      SizedBox(width: 8.0),
+                      ElevatedButton(
+                        onPressed: () { /* obsługa kliknięcia drugiego przycisku */ },
+                        child: Text("Przycisk 2"),
+                      ),
                     ],
                   ),
                 ],
