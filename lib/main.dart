@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quizzproject/widgets/mainscreen.dart';
+import 'package:quizzproject/widgets/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -34,19 +34,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _termsAccepted = false;
+
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => checkFirstRun(context));
-  }
-
-  void _checkIfTermsAccepted() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _termsAccepted = prefs.getBool('terms_accepted') ?? false;
-    });
   }
 
   void _showTermsDialog() {
@@ -80,7 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('terms_accepted', true);
     setState(() {
-      _termsAccepted = true;
     });
   }
 

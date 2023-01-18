@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:quizzproject/widgets/mainscreen.dart';
-import 'package:quizzproject/widgets/resultscreen.dart';
-import 'package:quizzproject/widgets/testscreen.dart';
+import 'package:quizzproject/widgets/main_screen.dart';
+import 'package:quizzproject/widgets/result_screen.dart';
+import 'package:quizzproject/widgets/test_screen.dart';
 
 class CreatedDrawer extends StatelessWidget {
   @override
