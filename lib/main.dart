@@ -1,8 +1,20 @@
+import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
-import 'package:quizzproject/widgets/main_screen.dart';
+import 'package:quizzproject/cron/cron_fetch_database.dart';
+import 'package:quizzproject/views/pages/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+Future<void> main() async {
+  // Setup CRON
+  Cron cron = Cron();
+  cron.schedule(Schedule.parse('0 0 * * * '), () async {
+    CronFetchDatabase cronFetchDatabase = CronFetchDatabase();
+    await cronFetchDatabase.fetchDatabase();
+  });
+  
+  // Download database (cache before running app)
+  CronFetchDatabase cronFetchDatabase = CronFetchDatabase();
+  await cronFetchDatabase.fetchDatabase();
   runApp(const MyApp());
 }
 
@@ -14,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: ' ',
+      title: '',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -34,8 +46,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-
   @override
   void initState() {
     super.initState();
@@ -72,14 +82,14 @@ class _MyHomePageState extends State<MyHomePage> {
   void _acceptTerms() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('terms_accepted', true);
-    setState(() {
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return MainScreen(tittle: widget.title);
+    return LoginPage();
   }
+
   Future checkFirstRun(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
